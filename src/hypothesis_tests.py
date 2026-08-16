@@ -18,7 +18,6 @@ def test_independent_samples(df: pd.DataFrame):
     print(f"Mean PM2.5 -> High Density Area: {high_density.mean():.2f}")
     print(f"Mean PM2.5 -> Low Density Area : {low_density.mean():.2f}")
     
-    # Requirement: Confidence Intervals & Welch's t-test
     t_stat, t_p = stats.ttest_ind(high_density, low_density, equal_var=False)
     diff = high_density.mean() - low_density.mean()
     se = np.sqrt(high_density.var()/len(high_density) + low_density.var()/len(low_density))
@@ -28,7 +27,6 @@ def test_independent_samples(df: pd.DataFrame):
     print(f"Welch's t-test p-value   : {t_p:.4e}")
     print(f"95% Confidence Interval  : [{ci_lower:.4f}, {ci_upper:.4f}]")
     
-    # Primary Non-parametric UMP test: Mann-Whitney U
     u_stat, u_p = stats.mannwhitneyu(high_density, low_density, alternative='greater')
     print(f"Mann-Whitney U Statistic : {u_stat:.2f}")
     print(f"Mann-Whitney U p-value   : {u_p:.4e}")
@@ -42,14 +40,12 @@ def test_paired_samples(df: pd.DataFrame):
     np.random.seed(42)
     sample_pm25 = df['PM2_5'].sample(200, random_state=42).values
     
-    # Simulating a morning clearance and an evening pollution aggregation
     morning_readings = sample_pm25 * 0.8  
     evening_readings = sample_pm25 * 1.05 + np.random.normal(0, 2, 200) 
     
     print(f"Longitudinal Morning Mean: {morning_readings.mean():.2f}")
     print(f"Longitudinal Evening Mean: {evening_readings.mean():.2f}")
     
-    # Wilcoxon Signed-Rank (Non-parametric pair test)
     w_stat, p_val_w = stats.wilcoxon(evening_readings, morning_readings, alternative='greater')
     print(f"Wilcoxon W Statistic     : {w_stat}")
     print(f"Wilcoxon p-value         : {p_val_w:.4e}")
@@ -73,7 +69,6 @@ def test_categorical_independence(df: pd.DataFrame):
     print(f"Degrees of Freedom     : {dof}")
     print(f"Standard p-value       : {p_val:.4e}")
     
-    # Strict Multiple Comparisons Penalty (Bonferroni)
     base_alpha = 0.05
     n_comparisons = 6
     alpha_adj = base_alpha / n_comparisons
