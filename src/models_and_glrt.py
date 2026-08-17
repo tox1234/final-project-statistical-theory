@@ -23,7 +23,6 @@ def run_regression_and_glrt(df: pd.DataFrame):
     print(f"R-squared  : {full_model.rsquared:.4f} (Indicates missing exogenous variables)")
     print(f"Condition #: {full_model.condition_number:.2e} (Severe Multicollinearity expected)")
     
-    # === הוספת קוד ייצור הגרף (Figure 3) ===
     plt.figure(figsize=(8, 6))
     fitted_vals = full_model.fittedvalues
     residuals = full_model.resid_pearson
