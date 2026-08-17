@@ -9,7 +9,8 @@ def analyze_distributions(df: pd.DataFrame):
     Evaluates the physical distribution constraints of pollutants.
     Applies KS-test for normality and fits a Gamma PDF via MLE.
     """
-    pm25 = df['PM2_5']
+    # סינון ערכי אפס או שליליים שגורמים לשגיאת MLE
+    pm25 = df['PM2_5'][df['PM2_5'] > 0]
     
     print("\n--- Part A: Distributions and Goodness of Fit ---")
     
