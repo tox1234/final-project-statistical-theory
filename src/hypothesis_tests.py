@@ -58,14 +58,15 @@ def test_categorical_independence(df: pd.DataFrame):
     print("\n--- Part D: Spatial Dependency & Categorical Independence ---")
     bins = [0, 2, 6, np.inf]
     labels = ['Near', 'Medium', 'Far']
-    df['Industry_Binned'] = pd.cut(df['Proximity_to_Industrial_Areas'], bins=bins, labels=labels)
+    
+    df['Industry_Binned'] = pd.cut(df['Proximity_to_Industrial_Areas'], bins=bins, labels=labels, include_lowest=True)
     
     contingency = pd.crosstab(df['Air_Quality'], df['Industry_Binned'])
     print("Cross-Tabulation Matrix:")
     print(contingency)
     
     chi2, p_val, dof, expected = stats.chi2_contingency(contingency)
-    print(f"\nPearson \u03c7\u00b2 Statistic   : {chi2:.2f}")
+    print(f"\nPearson χ² Statistic   : {chi2:.2f}")
     print(f"Degrees of Freedom     : {dof}")
     print(f"Standard p-value       : {p_val:.4e}")
     
