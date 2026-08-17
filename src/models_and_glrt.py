@@ -1,17 +1,17 @@
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
-import matplotlib.pyplot as plt
-import seaborn as sns
 from scipy.stats import chi2
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def run_regression_and_glrt(df: pd.DataFrame):
     """
     Constructs an Ordinary Least Squares (OLS) manifold and applies the 
-    Generalized Likelihood Ratio Test (GLRT) to evaluate sub-space constraints (\u03c9).
+    Generalized Likelihood Ratio Test (GLRT) to evaluate sub-space constraints (ω).
     """
     print("\n--- Part E: OLS Regression & Generalized Likelihood Ratio Test (GLRT) ---")
     
@@ -23,6 +23,22 @@ def run_regression_and_glrt(df: pd.DataFrame):
     print(f"R-squared  : {full_model.rsquared:.4f} (Indicates missing exogenous variables)")
     print(f"Condition #: {full_model.condition_number:.2e} (Severe Multicollinearity expected)")
     
+    # === הוספת קוד ייצור הגרף (Figure 3) ===
+    plt.figure(figsize=(8, 6))
+    fitted_vals = full_model.fittedvalues
+    residuals = full_model.resid_pearson
+    
+    sns.scatterplot(x=fitted_vals, y=residuals, alpha=0.5, color='steelblue')
+    plt.axhline(0, color='black', linestyle='-')
+    plt.title("Residuals Analysis of the OLS Regression")
+    plt.xlabel("Fitted Values")
+    plt.ylabel("Studentized Residuals")
+    plt.tight_layout()
+    plt.savefig('residuals_plot.png', dpi=300)
+    plt.close()
+    print("Residuals plot saved as 'residuals_plot.png'.")
+    # ==================================
+
     restricted_formula = 'PM2_5 ~ Temperature + Humidity + Population_Density + Proximity_to_Industrial_Areas'
     restricted_model = smf.ols(formula=restricted_formula, data=df).fit()
     
@@ -30,11 +46,11 @@ def run_regression_and_glrt(df: pd.DataFrame):
     df_diff = full_model.df_model - restricted_model.df_model
     glrt_p = chi2.sf(lr_stat, df_diff)
     
-    print(f"\nGLRT \u039b Statistic       : {lr_stat:.4f}")
-    print(f"Degrees of Freedom (\u0394) : {df_diff}")
+    print(f"\nGLRT Λ Statistic       : {lr_stat:.4f}")
+    print(f"Degrees of Freedom (Δ) : {df_diff}")
     print(f"GLRT p-value           : {glrt_p:.4f}")
     if glrt_p > 0.05:
-        print("Conclusion: The interaction parameter is statistically negligible. H0 (\u03c9 space) is accepted.")
+        print("Conclusion: The interaction parameter is statistically negligible. H0 (ω space) is accepted.")
 
 def run_logistic_modeling(df: pd.DataFrame):
     """
